@@ -1,11 +1,9 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/events.dart';
 import 'package:meteor_dodge/meteor_dodge_game.dart';
 
-class Player extends PositionComponent
+class Player extends SpriteComponent
     with HasGameReference<MeteorDodgeGame>, DragCallbacks {
   Player(Vector2 gameSize)
     : super(
@@ -15,6 +13,7 @@ class Player extends PositionComponent
 
   @override
   Future<void> onLoad() async {
+    sprite = await Sprite.load('duck.png');
     add(RectangleHitbox());
   }
 
@@ -25,11 +24,5 @@ class Player extends PositionComponent
 
     // Keep player inside screen bounds
     position.x = position.x.clamp(0, game.size.x - size.x);
-  }
-
-  @override
-  void render(Canvas canvas) {
-    final paint = Paint()..color = const Color(0xFF00FFAA);
-    canvas.drawRect(size.toRect(), paint);
   }
 }

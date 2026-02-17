@@ -1,11 +1,10 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'meteor_dodge_game.dart';
 import 'player.dart';
+import 'bombardment_effect.dart';
 
-class Meteor extends PositionComponent
+class Meteor extends SpriteComponent
     with HasGameReference<MeteorDodgeGame>, CollisionCallbacks {
   double speed;
 
@@ -14,6 +13,7 @@ class Meteor extends PositionComponent
 
   @override
   Future<void> onLoad() async {
+    sprite = await Sprite.load('bomb.png');
     add(RectangleHitbox());
   }
 
@@ -33,13 +33,28 @@ class Meteor extends PositionComponent
   ) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Player) {
-      game.gameOver();
-    }
-  }
+      // Create bombardment effect at collision point
+      final effectPosition = Vector2(
+        (position.x + other.position.x) / 2,
+        (position.y + other.position.y) / 2,
+      );
 
-  @override
-  void render(Canvas canvas) {
-    final paint = Paint()..color = const Color(0xFFFF5555);
-    canvas.drawOval(size.toRect(), paint);
+      final bombardment = BombardmentEffect(
+        centerPosition: effectPosition,
+        particleCount: 20,
+        duration: 1.5,
+      );
+
+      game.add(bombardment);
+      game.triggerBombardment(effectPosition);
+
+      // Remove the meteor that caused the collision
+      removeFromParent();
+
+      // Trigger game over after a short delay to see the effect
+      Future.delayed(Duration(milliseconds: 500), () {
+        game.gameOver();
+      });
+    }
   }
 }

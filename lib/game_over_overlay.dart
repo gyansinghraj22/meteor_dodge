@@ -27,15 +27,12 @@ class GameOverOverlay extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 'Score: ${game.score}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                ),
+                style: const TextStyle(color: Colors.white, fontSize: 22),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
-                  game.resetGame();
+                  game.restartGame();
                 },
                 child: const Text('RESTART'),
               ),
